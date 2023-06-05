@@ -18,14 +18,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinktecture.EntityFramewor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{2CFD0F6C-599B-41DA-A754-03A202B68D12}"
 ProjectSection(SolutionItems) = preProject
-	ci\ci.ps1 = ci\ci.ps1
-	azure-pipelines.yml = azure-pipelines.yml
 	LICENSE.md = LICENSE.md
 	README.md = README.md
 	Directory.Build.props = Directory.Build.props
 	.gitignore = .gitignore
 	icon.png = icon.png
-	.github\workflows\main.yml = .github\workflows\main.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinktecture.EntityFrameworkCore.SqlServer.Testing", "src\Thinktecture.EntityFrameworkCore.SqlServer.Testing\Thinktecture.EntityFrameworkCore.SqlServer.Testing.csproj", "{4A68E5B4-B0C9-4076-875A-C88AFAC5EB5F}"

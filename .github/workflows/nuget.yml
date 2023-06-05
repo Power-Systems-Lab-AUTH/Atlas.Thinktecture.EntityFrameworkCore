@@ -1,0 +1,28 @@
+name: NuGet
+
+on:
+  push:
+    branches: [ "publish-nuget" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Publish NuGet Relational
+        uses: Rebel028/publish-nuget@v2.8.0
+        with:
+          PROJECT_FILE_PATH: src\Thinktecture.EntityFrameworkCore.Relational\Thinktecture.EntityFrameworkCore.Relational.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          NUGET_SOURCE: https://nuget.pkg.github.com/Power-Systems-Lab-AUTH
+          TAG_COMMIT: false
+
+      - name: Publish NuGet Postgres
+        uses: Rebel028/publish-nuget@v2.8.0
+        with:
+          PROJECT_FILE_PATH: src\Thinktecture.EntityFrameworkCore.Npgsql\Thinktecture.EntityFrameworkCore.Npgsql.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          NUGET_SOURCE: https://nuget.pkg.github.com/Power-Systems-Lab-AUTH
+          TAG_COMMIT: false

@@ -7,7 +7,6 @@
   <Import Condition=" exists('$(ParentPropsFile)') " Project="$(ParentPropsFile)" />
     
   <PropertyGroup>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
@@ -15,10 +14,6 @@
   <ItemGroup>
     <None Include="./../../icon.png" Pack="true" PackagePath="" />
     <None Include="./../../LICENSE.md" Pack="true" PackagePath="$(PackageLicenseFile)" />
-  </ItemGroup>
-    
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
