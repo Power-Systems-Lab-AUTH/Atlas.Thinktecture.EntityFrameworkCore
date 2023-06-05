@@ -2,6 +2,7 @@
 
     <PropertyGroup>
       <PackageId>Atlas.Thinktecture.EntityFrameworkCore.Npgsql</PackageId>
+      <Version>7.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
