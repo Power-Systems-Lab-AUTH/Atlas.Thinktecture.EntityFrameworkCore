@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinktecture.EntityFramewor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinktecture.EntityFrameworkCore.Benchmarks", "samples\Thinktecture.EntityFrameworkCore.Benchmarks\Thinktecture.EntityFrameworkCore.Benchmarks.csproj", "{A279120C-4417-4C8B-9BEA-5C505DDFFB8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinktecture.EntityFrameworkCore.Npgsql", "src\Thinktecture.EntityFrameworkCore.Npgsql\Thinktecture.EntityFrameworkCore.Npgsql.csproj", "{E79209B7-E4A2-401F-8309-6454C0189682}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,7 @@ Global
 		{8B96D351-8A49-41C2-ABC8-5F9DC047C774} = {FC71B400-ACDA-4BBE-BCC1-D1CFB4EDEFE3}
 		{5A64640B-7EF4-43EE-BC65-09960A0B52E1} = {FC71B400-ACDA-4BBE-BCC1-D1CFB4EDEFE3}
 		{A279120C-4417-4C8B-9BEA-5C505DDFFB8D} = {30567A9D-BDC2-49C1-B0B4-91D37FB5CCC1}
+		{E79209B7-E4A2-401F-8309-6454C0189682} = {564262E5-94E5-4B32-8B0E-444D454DD35F}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B43A04CC-FB33-4B06-AC9B-BBDE177EF0E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -144,5 +147,9 @@ Global
 		{A279120C-4417-4C8B-9BEA-5C505DDFFB8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A279120C-4417-4C8B-9BEA-5C505DDFFB8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A279120C-4417-4C8B-9BEA-5C505DDFFB8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79209B7-E4A2-401F-8309-6454C0189682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79209B7-E4A2-401F-8309-6454C0189682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79209B7-E4A2-401F-8309-6454C0189682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79209B7-E4A2-401F-8309-6454C0189682}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
