@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Query;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Internal;
@@ -13,6 +14,7 @@ using Thinktecture.EntityFrameworkCore.BulkOperations;
 using Thinktecture.EntityFrameworkCore.Migrations;
 using Thinktecture.EntityFrameworkCore.Parameters;
 using Thinktecture.EntityFrameworkCore.Query;
+using Thinktecture.EntityFrameworkCore.Query.ExpressionTranslators;
 using Thinktecture.EntityFrameworkCore.TempTables;
 
 namespace Thinktecture.EntityFrameworkCore.Infrastructure;
@@ -32,10 +34,20 @@ public sealed class NpgsqlDbContextOptionsExtension : DbContextOptionsExtensionB
    /// <summary>
    /// Enables and disables support for "RowNumber".
    /// </summary>
+   [Obsolete($"Use '{nameof(AddWindowFunctionsSupport)}'")]
    public bool AddRowNumberSupport
    {
-      get => _relationalOptions.AddRowNumberSupport;
-      set => _relationalOptions.AddRowNumberSupport = value;
+      get => _relationalOptions.AddWindowFunctionsSupport;
+      set => _relationalOptions.AddWindowFunctionsSupport = value;
+   }
+
+   /// <summary>
+   /// Enables and disables support for window functions like "RowNumber".
+   /// </summary>
+   public bool AddWindowFunctionsSupport
+   {
+      get => _relationalOptions.AddWindowFunctionsSupport;
+      set => _relationalOptions.AddWindowFunctionsSupport = value;
    }
 
    /// <summary>
@@ -55,7 +67,7 @@ public sealed class NpgsqlDbContextOptionsExtension : DbContextOptionsExtensionB
    /// </summary>
    public bool AddCustomQueryableMethodTranslatingExpressionVisitorFactory
    {
-      get => _addCustomQueryableMethodTranslatingExpressionVisitorFactory || AddBulkOperationSupport || AddRowNumberSupport || AddTableHintSupport;
+      get => _addCustomQueryableMethodTranslatingExpressionVisitorFactory || AddBulkOperationSupport || AddWindowFunctionsSupport || AddTableHintSupport;
       set => _addCustomQueryableMethodTranslatingExpressionVisitorFactory = value;
    }
 
@@ -67,7 +79,7 @@ public sealed class NpgsqlDbContextOptionsExtension : DbContextOptionsExtensionB
    /// </summary>
    public bool AddCustomRelationalParameterBasedSqlProcessorFactory
    {
-      get => _addCustomRelationalParameterBasedSqlProcessorFactory || AddBulkOperationSupport || AddRowNumberSupport || AddTableHintSupport;
+      get => _addCustomRelationalParameterBasedSqlProcessorFactory || AddBulkOperationSupport || AddWindowFunctionsSupport || AddTableHintSupport;
       set => _addCustomRelationalParameterBasedSqlProcessorFactory = value;
    }
 
@@ -79,7 +91,7 @@ public sealed class NpgsqlDbContextOptionsExtension : DbContextOptionsExtensionB
    /// </summary>
    public bool AddCustomQuerySqlGeneratorFactory
    {
-      get => _addCustomQuerySqlGeneratorFactory || AddBulkOperationSupport || AddTenantDatabaseSupport || AddTableHintSupport;
+      get => _addCustomQuerySqlGeneratorFactory || AddBulkOperationSupport || AddTenantDatabaseSupport || AddWindowFunctionsSupport || AddTableHintSupport;
       set => _addCustomQuerySqlGeneratorFactory = value;
    }
 
@@ -125,9 +137,10 @@ public sealed class NpgsqlDbContextOptionsExtension : DbContextOptionsExtensionB
       services.AddSingleton<IBulkOperationsDbContextOptionsExtensionOptions>(provider => provider.GetRequiredService<NpgsqlDbContextOptionsExtensionOptions>());
       services.AddSingleton<ISingletonOptions>(provider => provider.GetRequiredService<NpgsqlDbContextOptionsExtensionOptions>());
 
+      services.Add<IMethodCallTranslatorPlugin, NpgsqlMethodCallTranslatorPlugin>(GetLifetime<IMethodCallTranslatorPlugin>());
+
       if (AddCustomQueryableMethodTranslatingExpressionVisitorFactory)
          AddWithCheck<IQueryableMethodTranslatingExpressionVisitorFactory, ThinktectureNpgsqlQueryableMethodTranslatingExpressionVisitorFactory, NpgsqlQueryableMethodTranslatingExpressionVisitorFactory>(services);
-
       if (AddCustomQuerySqlGeneratorFactory)
          AddWithCheck<IQuerySqlGeneratorFactory, ThinktectureNpgsqlQuerySqlGeneratorFactory, NpgsqlQuerySqlGeneratorFactory>(services);
 
@@ -137,7 +150,7 @@ public sealed class NpgsqlDbContextOptionsExtension : DbContextOptionsExtensionB
       if (AddBulkOperationSupport)
       {
          services.Add<IConventionSetPlugin, BulkOperationConventionSetPlugin>(GetLifetime<IConventionSetPlugin>());
-
+         
          AddEntityDataReader(services);
          services.TryAddScoped<NpgsqlBulkOperationExecutor>();
          services.TryAddScoped<IBulkInsertExecutor>(provider => provider.GetRequiredService<NpgsqlBulkOperationExecutor>());

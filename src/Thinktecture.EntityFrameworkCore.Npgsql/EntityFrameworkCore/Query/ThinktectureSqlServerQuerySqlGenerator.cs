@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 using Thinktecture.EntityFrameworkCore.Internal;
+using Thinktecture.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Thinktecture.EntityFrameworkCore.Query;
 
@@ -18,10 +20,62 @@ public class ThinktectureNpgsqlQuerySqlGenerator : NpgsqlQuerySqlGenerator
    public ThinktectureNpgsqlQuerySqlGenerator(
       QuerySqlGeneratorDependencies dependencies,
       IRelationalTypeMappingSource typeMappingSource,
+      INpgsqlSingletonOptions sqlServerSingletonOptions,
       ITenantDatabaseProvider databaseProvider)
-      : base(dependencies, false, new Version())
+      : base(dependencies, typeMappingSource, false, sqlServerSingletonOptions.PostgresVersion)
    {
       _databaseProvider = databaseProvider ?? throw new ArgumentNullException(nameof(databaseProvider));
+   }
+
+   /// <inheritdoc />
+   protected override Expression VisitExtension(Expression extensionExpression)
+   {
+      switch (extensionExpression)
+      {
+         case WindowFunctionExpression windowFunctionExpression:
+            return VisitWindowFunction(windowFunctionExpression);
+         default:
+            return base.VisitExtension(extensionExpression);
+      }
+   }
+
+   private Expression VisitWindowFunction(WindowFunctionExpression windowFunctionExpression)
+   {
+      Visit(windowFunctionExpression.AggregateFunction);
+
+      Sql.Append(" ").Append("OVER (");
+
+      if (windowFunctionExpression.Partitions.Count != 0)
+      {
+         Sql.Append("PARTITION BY ");
+
+         for (var i = 0; i < windowFunctionExpression.Partitions.Count; i++)
+         {
+            if (i != 0)
+               Sql.Append(", ");
+
+            var partition = windowFunctionExpression.Partitions[i];
+            Visit(partition);
+         }
+      }
+
+      if (windowFunctionExpression.Orderings.Count != 0)
+      {
+         Sql.Append(" ORDER BY ");
+
+         for (var i = 0; i < windowFunctionExpression.Orderings.Count; i++)
+         {
+            if (i != 0)
+               Sql.Append(", ");
+
+            var ordering = windowFunctionExpression.Orderings[i];
+            VisitOrdering(ordering);
+         }
+      }
+
+      Sql.Append(")");
+
+      return windowFunctionExpression;
    }
 
    /// <inheritdoc />

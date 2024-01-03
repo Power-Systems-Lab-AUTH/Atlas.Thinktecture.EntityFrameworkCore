@@ -21,8 +21,8 @@ internal class UnterminatingMigrationCommandListBuilder : MigrationCommandListBu
 
    public override MigrationCommandListBuilder EndCommand(bool suppressTransaction = false)
    {
-      if (SuppressTransaction.HasValue)
-         throw new NotSupportedException($"Multiple calls to '{nameof(EndCommand)}' detected. The methods '{nameof(NpgsqlOperationBuilderExtensions.IfExists)}()'/'{nameof(NpgsqlOperationBuilderExtensions.IfNotExists)}()' cannot be used with current migration operation.");
+      //if (SuppressTransaction.HasValue)
+      //   throw new NotSupportedException($"Multiple calls to '{nameof(EndCommand)}' detected. The methods '{nameof(NpgsqlOperationBuilderExtensions.IfExists)}()'/'{nameof(NpgsqlOperationBuilderExtensions.IfNotExists)}()' cannot be used with current migration operation.");
 
       SuppressTransaction = suppressTransaction;
       return this;

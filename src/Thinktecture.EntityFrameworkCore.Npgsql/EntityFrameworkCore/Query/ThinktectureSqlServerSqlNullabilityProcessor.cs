@@ -19,23 +19,25 @@ public class ThinktectureNpgsqlSqlNullabilityProcessor : NpgsqlSqlNullabilityPro
    }
 
    /// <inheritdoc />
-   protected override TableExpressionBase Visit(TableExpressionBase tableExpressionBase)
-   {
-      if (tableExpressionBase is INotNullableSqlExpression)
-         return tableExpressionBase;
-
-      return base.Visit(tableExpressionBase);
-   }
-
-   /// <inheritdoc />
    protected override SqlExpression VisitCustomSqlExpression(SqlExpression sqlExpression, bool allowOptimizedExpansion, out bool nullable)
    {
-      if (sqlExpression is INotNullableSqlExpression)
+      switch (sqlExpression)
       {
-         nullable = false;
-         return sqlExpression;
+         case INotNullableSqlExpression:
+         {
+            nullable = false;
+            return sqlExpression;
+         }
+         //case WindowFunctionExpression { AggregateFunction: NpgsqlAggregateFunctionExpression aggregateFunction } windowFunctionExpression:
+         //{
+         //   var visitedAggregateFunction = base.VisitNpgsqlAggregateFunction(aggregateFunction, allowOptimizedExpansion, out nullable);
+//
+         //   return aggregateFunction == visitedAggregateFunction
+         //             ? windowFunctionExpression
+         //             : new WindowFunctionExpression(visitedAggregateFunction, windowFunctionExpression.Partitions, windowFunctionExpression.Orderings);
+         //}
+         default:
+            return base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable);
       }
-
-      return base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable);
    }
 }

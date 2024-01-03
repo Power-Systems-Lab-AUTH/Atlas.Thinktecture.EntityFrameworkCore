@@ -45,12 +45,12 @@ public sealed class NpgsqlBulkInsertOptions : IBulkInsertOptions
 
       PropertiesToInsert = optionsToInitializeFrom.PropertiesToInsert;
 
-      if (optionsToInitializeFrom is NpgsqlBulkInsertOptions NpgsqlOptions)
+      if (optionsToInitializeFrom is NpgsqlBulkInsertOptions sqlServerOptions)
       {
-         BulkCopyTimeout = NpgsqlOptions.BulkCopyTimeout;
-         SqlBulkCopyOptions = NpgsqlOptions.SqlBulkCopyOptions;
-         BatchSize = NpgsqlOptions.BatchSize;
-         EnableStreaming = NpgsqlOptions.EnableStreaming;
+         BulkCopyTimeout = sqlServerOptions.BulkCopyTimeout;
+         SqlBulkCopyOptions = sqlServerOptions.SqlBulkCopyOptions;
+         BatchSize = sqlServerOptions.BatchSize;
+         EnableStreaming = sqlServerOptions.EnableStreaming;
       }
    }
 }

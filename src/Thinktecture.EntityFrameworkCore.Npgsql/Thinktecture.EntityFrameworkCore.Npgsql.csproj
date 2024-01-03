@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <PackageId>Atlas.Thinktecture.EntityFrameworkCore.Npgsql</PackageId>
-      <Version>7.0.2</Version>
+      <Version>8.0.0-beta</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,6 +12,10 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="EntityFrameworkCore\TempTables\" />
     </ItemGroup>
 
 </Project>

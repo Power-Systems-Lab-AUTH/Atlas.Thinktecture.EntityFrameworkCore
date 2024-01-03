@@ -55,7 +55,6 @@ public sealed class NpgsqlBulkOperationExecutor
    {
       return new NpgsqlBulkInsertOptions { PropertiesToInsert = propertiesToInsert };
    }
-
    /// <inheritdoc />
    public Task BulkInsertAsync<T>(
       IEnumerable<T> entities,
@@ -82,13 +81,13 @@ public sealed class NpgsqlBulkOperationExecutor
       ArgumentNullException.ThrowIfNull(tableName);
       ArgumentNullException.ThrowIfNull(options);
 
-      if (options is not NpgsqlBulkInsertOptions NpgsqlOptions)
-         NpgsqlOptions = new NpgsqlBulkInsertOptions(options);
+      if (options is not NpgsqlBulkInsertOptions sqlServerOptions)
+         sqlServerOptions = new NpgsqlBulkInsertOptions(options);
 
-      var properties = NpgsqlOptions.PropertiesToInsert.DeterminePropertiesForInsert(entityType, null);
+      var properties = sqlServerOptions.PropertiesToInsert.DeterminePropertiesForInsert(entityType, null);
       properties.EnsureNoSeparateOwnedTypesInsideCollectionOwnedType();
 
-      var ctx = bulkOperationContextFactory.CreateForBulkInsert(_ctx, NpgsqlOptions, properties);
+      var ctx = bulkOperationContextFactory.CreateForBulkInsert(_ctx, sqlServerOptions, properties);
 
       await BulkInsertAsync(entitiesOrValues, schema, tableName, ctx, cancellationToken);
    }
@@ -181,37 +180,54 @@ public sealed class NpgsqlBulkOperationExecutor
       }
    }
 
-   private SqlBulkCopy CreateSqlBulkCopy(SqlConnection sqlCon, SqlTransaction? sqlTx, string? schema, string tableName, NpgsqlBulkInsertOptions NpgsqlOptions)
+   private SqlBulkCopy CreateSqlBulkCopy(SqlConnection sqlCon, SqlTransaction? sqlTx, string? schema, string tableName, NpgsqlBulkInsertOptions sqlServerOptions)
    {
-      var bulkCopy = new SqlBulkCopy(sqlCon, NpgsqlOptions.SqlBulkCopyOptions, sqlTx)
+      var bulkCopy = new SqlBulkCopy(sqlCon, sqlServerOptions.SqlBulkCopyOptions, sqlTx)
                      {
                         DestinationTableName = _sqlGenerationHelper.DelimitIdentifier(tableName, schema),
-                        EnableStreaming = NpgsqlOptions.EnableStreaming
+                        EnableStreaming = sqlServerOptions.EnableStreaming
                      };
 
-      if (NpgsqlOptions.BulkCopyTimeout.HasValue)
-         bulkCopy.BulkCopyTimeout = (int)NpgsqlOptions.BulkCopyTimeout.Value.TotalSeconds;
+      if (sqlServerOptions.BulkCopyTimeout.HasValue)
+         bulkCopy.BulkCopyTimeout = (int)sqlServerOptions.BulkCopyTimeout.Value.TotalSeconds;
 
-      if (NpgsqlOptions.BatchSize.HasValue)
-         bulkCopy.BatchSize = NpgsqlOptions.BatchSize.Value;
+      if (sqlServerOptions.BatchSize.HasValue)
+         bulkCopy.BatchSize = sqlServerOptions.BatchSize.Value;
 
       return bulkCopy;
    }
 
    private void LogInserting(SqlBulkCopyOptions options, SqlBulkCopy bulkCopy, string columns)
    {
-      _logger.Logger.LogDebug(EventIds.Inserting, @"Executing DbCommand [SqlBulkCopyOptions={SqlBulkCopyOptions}, BulkCopyTimeout={BulkCopyTimeout}, BatchSize={BatchSize}, EnableStreaming={EnableStreaming}]
-INSERT BULK {Table} ({Columns})", options, bulkCopy.BulkCopyTimeout, bulkCopy.BatchSize, bulkCopy.EnableStreaming,
-                              bulkCopy.DestinationTableName, columns);
+      _logger.Logger.LogDebug(EventIds.Inserting,
+                              """
+                              Executing DbCommand [SqlBulkCopyOptions={SqlBulkCopyOptions}, BulkCopyTimeout={BulkCopyTimeout}, BatchSize={BatchSize}, EnableStreaming={EnableStreaming}]
+                              INSERT BULK {Table} ({Columns})
+                              """,
+                              options,
+                              bulkCopy.BulkCopyTimeout,
+                              bulkCopy.BatchSize,
+                              bulkCopy.EnableStreaming,
+                              bulkCopy.DestinationTableName,
+                              columns);
    }
 
    private void LogInserted(SqlBulkCopyOptions options, TimeSpan duration, SqlBulkCopy bulkCopy, string columns)
    {
-      _logger.Logger.LogInformation(EventIds.Inserted, @"Executed DbCommand ({Duration}ms) [SqlBulkCopyOptions={SqlBulkCopyOptions}, BulkCopyTimeout={BulkCopyTimeout}, BatchSize={BatchSize}, EnableStreaming={EnableStreaming}]
-INSERT BULK {Table} ({Columns})", (long)duration.TotalMilliseconds,
-                                    options, bulkCopy.BulkCopyTimeout, bulkCopy.BatchSize, bulkCopy.EnableStreaming,
-                                    bulkCopy.DestinationTableName, columns);
+      _logger.Logger.LogInformation(EventIds.Inserted,
+                                    """
+                                    Executed DbCommand ({Duration}ms) [SqlBulkCopyOptions={SqlBulkCopyOptions}, BulkCopyTimeout={BulkCopyTimeout}, BatchSize={BatchSize}, EnableStreaming={EnableStreaming}]
+                                    INSERT BULK {Table} ({Columns})
+                                    """,
+                                    (long)duration.TotalMilliseconds,
+                                    options,
+                                    bulkCopy.BulkCopyTimeout,
+                                    bulkCopy.BatchSize,
+                                    bulkCopy.EnableStreaming,
+                                    bulkCopy.DestinationTableName,
+                                    columns);
    }
+
 
    /// <inheritdoc />
    public async Task TruncateTableAsync<T>(CancellationToken cancellationToken = default)

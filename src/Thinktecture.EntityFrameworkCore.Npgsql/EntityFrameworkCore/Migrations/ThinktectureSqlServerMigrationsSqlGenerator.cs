@@ -114,6 +114,9 @@ public class ThinktectureNpgsqlMigrationsSqlGenerator : NpgsqlMigrationsSqlGener
       if (!terminate)
          return;
 
+      //if (operation.Comment != null)
+      //   AddDescription(builder, operation.Comment, operation.Schema, operation.Table, operation.Name);
+
       builder.EndCommand();
    }
 
