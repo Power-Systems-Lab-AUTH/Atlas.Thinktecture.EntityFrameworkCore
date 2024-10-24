@@ -16,7 +16,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Thinktecture.EntityFrameworkCore.Relational/Thinktecture.EntityFrameworkCore.Relational.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://nuget.pkg.github.com/Power-Systems-Lab-AUTH
+          NUGET_SOURCE: https://nuget.pkg.github.com/Stellar-Blue
           TAG_COMMIT: false
 
       - name: Publish NuGet Postgres
@@ -24,7 +24,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Thinktecture.EntityFrameworkCore.Npgsql/Thinktecture.EntityFrameworkCore.Npgsql.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://nuget.pkg.github.com/Power-Systems-Lab-AUTH
+          NUGET_SOURCE: https://nuget.pkg.github.com/Stellar-Blue
           TAG_COMMIT: false
 
       - name: Publish NuGet Bulk Operations
@@ -32,5 +32,5 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/Thinktecture.EntityFrameworkCore.BulkOperations/Thinktecture.EntityFrameworkCore.BulkOperations.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://nuget.pkg.github.com/Power-Systems-Lab-AUTH
+          NUGET_SOURCE: https://nuget.pkg.github.com/Stellar-Blue
           TAG_COMMIT: false
